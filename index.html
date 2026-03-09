@@ -14,46 +14,74 @@
         <link rel="apple-touch-icon" sizes="144x144" href="images/apple-touch-icon-ipad-retina-152x152.png">
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+        <link rel="stylesheet" href="path/to/font-awesome/css/font-awesome.min.css">
     </head>
     <body class="bg-dark">
-        <div id="divWeather" class="row d-flex justify-content-center py-5">
-            <div class="col-md-8 col-lg-6 col-xl-5">
-
-                <div class="card text-body" style=" border-radius: 35px;">
-                    <div class="card-body p-4">
+        <div id="divWeather" class="row d-flex justify-content-center">
+        </div>
+        
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+        <script>
+            const strBaseURL=`https://api.open-meteo.com/v1/forecast?latitude=36.1682&longitude=-85.5016&current=temperature_2m,relative_humidity_2m,precipitation,weather_code&timezone=America%2FChicago&wind_speed_unit=mph&temperature_unit=fahrenheit&precipitation_unit=inch`
+            fetch(strBaseURL)
+            .then(response =>{
+                if(!response.ok)
+                {
+                    throw new console.error('Bad HTTP Response')
+                }
+                return response.json()
+            })
+            .then(data => {
+                arrWeather = data
+                let strWeatherIcon
+                let strWeatherStatus
+                if(arrWeather.current.weather_code == 0)
+                {
+                    strWeatherStatus = "Sunny"
+                    strWeatherIcon = "bi bi-brightness-high"
+                } else if(arrWeather.current.weather_code == 1 | arrWeather.current.weather_code == 2 | arrWeather.current.weather_code == 3)
+                {
+                    strWeatherStatus = "Cloudy"
+                    strWeatherIcon = "bi bi-cloud-fill"
+                } else if(arrWeather.current.weather_code == 61 | arrWeather.current.weather_code == 63 | arrWeather.current.weather_code == 65)
+                {
+                    strWeatherStatus = "Raining"
+                    strWeatherIcon = "bi bi-cloud-drizzle-fill"
+                } else if(arrWeather.current.weather_code == 71 | arrWeather.current.weather_code == 73 | arrWeather.current.weather_code == 75)
+                {
+                    strWeatherStatus = "Snowing"
+                    strWeatherIcon = "bi bi-cloud-snow-fill"
+                } else if(arrWeather.current.weather_code == 95)
+                {
+                    strWeatherStatus = "Thunderstorms"
+                    strWeatherIcon = "bi bi-cloud-lightning-rain-fill"
+                }
+                document.querySelector('#divWeather').innerHTML += `<div class="col-md-8 col-lg-6 col-xl-5"><div class="card text-body">
+                    <div class="card-body">
 
                         <div class="d-flex">
-                            <h6 class="flex-grow-1">Warsaw</h6>
-                            <h6>15:07</h6>
+                            <h6 class="flex-grow-1">Cookeville</h6>
                         </div>
 
                         <div class="d-flex flex-column text-center mt-5 mb-4">
-                        <h6 class="display-4 mb-0 font-weight-bold"> 13°C </h6>
-                        <span class="small" style="color: #868B94">Stormy</span>
+                            <i class="${strWeatherIcon}" style="font-size: 100px"></i>
+                        <h6 class="display-4 mb-0 font-weight-bold"> ${arrWeather.current.temperature_2m} </h6>
+                        ${strWeatherStatus}
                         </div>
 
                         <div class="d-flex align-items-center">
-                            <div class="flex-grow-1" style="font-size: 1rem;">
-                                <div><i class="fas fa-wind fa-fw" style="color: #868B94;"></i> <span class="ms-1"> 40 km/h
-                                </span>
+                            <div class="flex-grow-1">
+                                <div><i class="bi bi-moisture" style="font-size: 15px"></i> ${arrWeather.current.relative_humidity_2m}%
                                 </div>
-                                <div><i class="fas fa-tint fa-fw" style="color: #868B94;"></i> <span class="ms-1"> 84%
-                                </span></div>
-                                <div><i class="fas fa-sun fa-fw" style="color: #868B94;"></i> <span class="ms-1"> 0.2h
-                                </span></div>
                             </div>
-                        <div>
-                            <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-weather/ilu1.webp"
-                            width="100px">
-                        </div>
                         </div>
 
                     </div>
                 </div>
 
-            </div>
-        </div>
-        
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+            </div>`
+                })
+
+        </script>
     </body>
 </html>
